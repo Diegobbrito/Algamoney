@@ -7,7 +7,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.0</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath />
 	</parent>
 	<groupId>br.com.gft.algamoney-api</groupId>
 	<artifactId>algamoney-api</artifactId>
@@ -65,6 +65,14 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.6.Final</version>
 		</dependency>
+
+
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
 
 	</dependencies>
 

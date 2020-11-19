@@ -1,7 +1,6 @@
 package br.com.gft.resource;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -45,8 +44,8 @@ public class PessoaResource {
 	
 	@GetMapping("/{codigo}")
 	public ResponseEntity<?> buscarPeloCodigo(@PathVariable Long codigo) {
-		Optional<Pessoa> categoria = pessoaRepository.findById(codigo);
-		return categoria.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categoria);
+		Pessoa pessoa = pessoaRepository.findById(codigo).isPresent() ? pessoaRepository.findById(codigo).get() : null;
+		return pessoa == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(pessoa);
 	}
 	
 	@PostMapping

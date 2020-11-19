@@ -1,6 +1,5 @@
 package br.com.gft.resource;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gft.event.RecursoCriadoEvent;
 import br.com.gft.model.Categoria;
@@ -43,9 +41,6 @@ public class CategoriaResource {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
-		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo").buildAndExpand(categoriaSalva.getCodigo()).toUri();
-		response.setHeader("Location", uri.toASCIIString());
 		
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
