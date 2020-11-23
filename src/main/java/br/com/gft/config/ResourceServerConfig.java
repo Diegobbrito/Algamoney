@@ -25,6 +25,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers("/categorias").permitAll()
+			.antMatchers("/v2/api-docs").permitAll()
+			.antMatchers("/swagger-ui").permitAll()
+			.antMatchers("/swagger-ui.html").permitAll()
 			.anyRequest().authenticated()
 			.and()			
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -35,9 +38,4 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		resources.stateless(true);
 	}
-	
-	
-	
-	
-
 }
