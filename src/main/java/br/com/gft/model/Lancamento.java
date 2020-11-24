@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,25 +26,32 @@ import lombok.Setter;
 @Getter @Setter
 public class Lancamento {
 
+	@ApiModelProperty(value = "Codigo do lancamento",example = "1")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	
+	@ApiModelProperty(value = "Descrição do lancamento", example = "Salário mensal")
 	@NotNull
 	private String descricao;
 	
+	
+	@ApiModelProperty( example = "30/10/2020")
 	@NotNull
 	@Column(name = "data_vencimento")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataVencimento;
 	
+	@ApiModelProperty( example = "29/10/2020")
 	@Column(name = "data_pagamento")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataPagamento;
 	
+	@ApiModelProperty(example = "6500.00")
 	@NotNull
 	private BigDecimal valor;
 	
+	@ApiModelProperty(value = "Distribuição de lucros")
 	private String observacao;
 	
 	@NotNull

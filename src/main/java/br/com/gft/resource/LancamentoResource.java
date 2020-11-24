@@ -31,7 +31,11 @@ import br.com.gft.repository.LancamentoRepository;
 import br.com.gft.repository.filter.LancamentoFilter;
 import br.com.gft.service.LancamentoService;
 import br.com.gft.service.exception.PessoaInexistenteOuInativaException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
+@Api(tags = "Lancamentos")
 @RestController
 @RequestMapping("/lancamentos")
 public class LancamentoResource {
@@ -48,20 +52,27 @@ public class LancamentoResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiOperation("Listar todos os lancamentos")
 	@GetMapping
 	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
 		return lancamentoRepository.filtrar(lancamentoFilter, pageable);
 	}
 	
+	@ApiOperation("Buscar um lancamento pelo codigo")
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
+	public ResponseEntity<Lancamento> buscarPeloCodigo(
+			@ApiParam(value = "Codigo de um lancamento", example = "1")
+			@PathVariable Long codigo) {
 		Lancamento lancamento = lancamentoRepository.findById(codigo).isPresent() ? lancamentoRepository.findById(codigo).get() : null;
 		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
 	}
 	
+	@ApiOperation("Criar um novo lancamento")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
+	public ResponseEntity<Lancamento> criar(
+			@ApiParam(name = "corpo", value = "Representação de um novo lancamento")
+			@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
 		Lancamento lancamentoSalva = lancamentoService.salvar(lancamento);
 		
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalva.getCodigo()));
@@ -77,9 +88,12 @@ public class LancamentoResource {
 		return ResponseEntity.badRequest().body(erros);
 	}
 	
+	@ApiOperation("Deletar lancamento pelo codigo")
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(@PathVariable Long codigo) {
+	public void remover(
+			@ApiParam(value = "Codigo de um lancamento", example = "1")
+			@PathVariable Long codigo) {
 		lancamentoRepository.deleteById(codigo);
 	}
 		

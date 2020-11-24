@@ -21,7 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gft.event.RecursoCriadoEvent;
 import br.com.gft.model.Categoria;
 import br.com.gft.repository.CategoriaRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
+@Api(tags = "Categorias")
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
@@ -32,14 +36,17 @@ public class CategoriaResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiOperation("Lista todas as categorias")
 	@GetMapping
 	public List<Categoria> listar(){
 		return categoriaRepository.findAll();
 	}
 	
+	@ApiOperation("Cria uma nova categoria")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
+	public ResponseEntity<Categoria> criar(@ApiParam(name = "corpo", value = "Representação de uma nova categoria")
+			@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
 		
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
@@ -47,8 +54,9 @@ public class CategoriaResource {
 		
 	}
 	
+	@ApiOperation("Busca uma categoria pelo codigo")
 	@GetMapping("/{codigo}")
-	public ResponseEntity<?> buscarPeloCodigo(@PathVariable Long codigo) {
+	public ResponseEntity<?> buscarPeloCodigo(@ApiParam(value = "Codigo de uma categoria", example = "1") @PathVariable Long codigo) {
 		Optional<Categoria> categoria = categoriaRepository.findById(codigo);
 		return categoria.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categoria);
 	}

@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,16 +20,19 @@ import lombok.Setter;
 @Getter @Setter
 public class Pessoa {
 	
+	@ApiModelProperty(value = "Codigo da pessoa",example = "1")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	
+	@ApiModelProperty(example = "Mauricio de Souza")
 	@NotNull
 	private String nome;
 	
 	@Embedded
 	private Endereco endereco;
 	
+	@ApiModelProperty(value = "Status da pessoa", example = "true")
 	@NotNull
 	private boolean ativo;
 
