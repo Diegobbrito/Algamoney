@@ -19,26 +19,19 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 
 	@Bean
 	public Docket apiDocket() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("br.com.gft"))
-				.build()
-				.apiInfo(apiInfo())
-				.tags(new Tag("Categorias", "Gerencia as categorias"),
-						new Tag("Lancamentos", "Gerencia os lancamentos"),
-						new Tag("Pessoas", "Gerencia as pessoas"));
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("br.com.gft")) //Seleção do pacote para geração da doc
+				.build().apiInfo(apiInfo()).tags(new Tag("Categorias", "Gerencia as categorias"),						//Criação de Tags para organização
+						new Tag("Lancamentos", "Gerencia os lancamentos"), new Tag("Pessoas", "Gerencia as pessoas"));
 	}
 
 	public ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-				.title("AlgaMoney API")
-				.description("API aberta para pessoas")
-				.version("1")
-				.build();
+		return new ApiInfoBuilder().title("AlgaMoney API").description("API aberta para pessoas").version("1").build(); //Dados da documentação
 	}
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/swagger-ui/**")
-				.addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+				.addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/") //Local do swagger-ui v3.0
 				.resourceChain(false);
 	}
 

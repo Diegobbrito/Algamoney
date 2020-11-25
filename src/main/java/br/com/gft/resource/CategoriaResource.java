@@ -22,6 +22,7 @@ import br.com.gft.event.RecursoCriadoEvent;
 import br.com.gft.model.Categoria;
 import br.com.gft.repository.CategoriaRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -29,42 +30,40 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaResource {
-	
+
 	@Autowired
 	private CategoriaRepository categoriaRepository;
-	
+
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
-	@ApiOperation("Lista todas as categorias")
+
+	@ApiOperation("Lista todas as categorias")			//Utilizado na documentação
 	@GetMapping
-	public List<Categoria> listar(){
+	public List<Categoria> listar() {
 		return categoriaRepository.findAll();
 	}
-	
+
 	@ApiOperation("Cria uma nova categoria")
-	@PostMapping
+	@PostMapping										//Utilizado para utilizar token na documentação
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Categoria> criar(@ApiParam(name = "corpo", value = "Representação de uma nova categoria")
-			@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
+	public ResponseEntity<Categoria> criar(			//Utilizado na documentação
+			@ApiParam(name = "corpo", value = "Representação de uma nova categoria") @Valid @RequestBody Categoria categoria,
+			HttpServletResponse response) {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
-		
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
-		
+
 	}
-	
+
 	@ApiOperation("Busca uma categoria pelo codigo")
 	@GetMapping("/{codigo}")
-	public ResponseEntity<?> buscarPeloCodigo(@ApiParam(value = "Codigo de uma categoria", example = "1") @PathVariable Long codigo) {
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
+	public ResponseEntity<?> buscarPeloCodigo(
+			@ApiParam(value = "Codigo de uma categoria", example = "1") @PathVariable Long codigo) {
 		Optional<Categoria> categoria = categoriaRepository.findById(codigo);
 		return categoria.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categoria);
 	}
-	
-//	@DeleteMapping("/{codigo}")
-//	@ResponseStatus(HttpStatus.NO_CONTENT)
-//	public void remover(@PathVariable Long codigo) {
-//		categoriaRepository.deleteById(codigo);
-//	}
-	
+
 }

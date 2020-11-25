@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter @Setter
 public class Categoria {
 	
-	@ApiModelProperty(value = "Codigo de uma categoria", example = "1")
+	@ApiModelProperty(value = "Codigo de uma categoria", example = "1")  //Utilizado para a documentação
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;

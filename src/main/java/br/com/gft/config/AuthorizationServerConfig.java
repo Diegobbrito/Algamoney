@@ -21,7 +21,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
-		.withClient("angular")
+		.withClient("angular")						//Criação de cliente em memoria
 		.secret("angular")
 		.scopes("read", "write")
 		.authorizedGrantTypes("password")

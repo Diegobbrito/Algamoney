@@ -13,25 +13,25 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @Configuration
 @EnableWebSecurity
 @EnableResourceServer
-public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
-	
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-		.withUser("admin").password("admin").roles("ROLE");
+		auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ROLE");
 	}
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers("/categorias").permitAll()
-			.antMatchers("/v2/api-docs").permitAll()
+			.antMatchers("/v2/api-docs").permitAll() // Liberação para documentação																											
 			.antMatchers("/swagger-ui/*").permitAll()
 			.antMatchers("/swagger-resources/**").permitAll()
 			.anyRequest().authenticated()
-			.and()			
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.csrf().disable();
+			.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+				.csrf().disable();
 	}
 
 	@Override

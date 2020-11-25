@@ -11,14 +11,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.com.gft.event.RecursoCriadoEvent;
 
 @Component
-public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent>{
+public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent> {
 
 	@Override
 	public void onApplicationEvent(RecursoCriadoEvent recursoCriadoEvent) {
 
 		HttpServletResponse response = recursoCriadoEvent.getResponse();
 		Long codigo = recursoCriadoEvent.getCodigo();
-		
+
 		adicionarHeaderLocation(response, codigo);
 	}
 

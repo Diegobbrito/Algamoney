@@ -32,6 +32,7 @@ import br.com.gft.repository.filter.LancamentoFilter;
 import br.com.gft.service.LancamentoService;
 import br.com.gft.service.exception.PessoaInexistenteOuInativaException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -39,62 +40,66 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/lancamentos")
 public class LancamentoResource {
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
-	
+
 	@Autowired
 	LancamentoService lancamentoService;
-	
+
 	@Autowired
 	private ApplicationEventPublisher publisher;
-	
+
 	@ApiOperation("Listar todos os lancamentos")
 	@GetMapping
-	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
+	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
 		return lancamentoRepository.filtrar(lancamentoFilter, pageable);
 	}
-	
+
 	@ApiOperation("Buscar um lancamento pelo codigo")
 	@GetMapping("/{codigo}")
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<Lancamento> buscarPeloCodigo(
-			@ApiParam(value = "Codigo de um lancamento", example = "1")
-			@PathVariable Long codigo) {
-		Lancamento lancamento = lancamentoRepository.findById(codigo).isPresent() ? lancamentoRepository.findById(codigo).get() : null;
+			@ApiParam(value = "Codigo de um lancamento", example = "1") @PathVariable Long codigo) {
+		Lancamento lancamento = lancamentoRepository.findById(codigo).isPresent()
+				? lancamentoRepository.findById(codigo).get()
+				: null;
 		return lancamento != null ? ResponseEntity.ok(lancamento) : ResponseEntity.notFound().build();
 	}
-	
+
 	@ApiOperation("Criar um novo lancamento")
 	@PostMapping
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Lancamento> criar(
-			@ApiParam(name = "corpo", value = "Representação de um novo lancamento")
-			@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
+			@ApiParam(name = "corpo", value = "Representação de um novo lancamento") @Valid @RequestBody Lancamento lancamento,
+			HttpServletResponse response) {
 		Lancamento lancamentoSalva = lancamentoService.salvar(lancamento);
-		
+
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoSalva.getCodigo()));
 		return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalva);
-		
+
 	}
-	
-	@ExceptionHandler({ PessoaInexistenteOuInativaException.class})
-	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex){
-		String mensagemUsuario = messageSource.getMessage( "pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
+
+	@ExceptionHandler({ PessoaInexistenteOuInativaException.class })
+	public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex) {
+		String mensagemUsuario = messageSource.getMessage("pessoa.inexistente-ou-inativa", null,
+				LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ex.toString();
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 		return ResponseEntity.badRequest().body(erros);
 	}
-	
+
 	@ApiOperation("Deletar lancamento pelo codigo")
 	@DeleteMapping("/{codigo}")
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void remover(
-			@ApiParam(value = "Codigo de um lancamento", example = "1")
-			@PathVariable Long codigo) {
+	public void remover(@ApiParam(value = "Codigo de um lancamento", example = "1") @PathVariable Long codigo) {
 		lancamentoRepository.deleteById(codigo);
 	}
-		
+
 }
