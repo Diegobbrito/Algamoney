@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.algamoney.event.RecursoCriadoEvent;
@@ -33,12 +34,14 @@ public class CategoriaResource {
 
 	@ApiOperation("Lista todas as categorias")			//Utilizado na documentação
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
 	public List<Categoria> listar() {
 		return categoriaRepository.findAll();
 	}
 
 	@ApiOperation("Cria uma nova categoria")
 	@PostMapping										//Utilizado para utilizar token na documentação
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA') and #oauth2.hasScope('write')")
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Categoria> criar(			//Utilizado na documentação
@@ -53,6 +56,7 @@ public class CategoriaResource {
 
 	@ApiOperation("Busca uma categoria pelo codigo")
 	@GetMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<?> buscarPeloCodigo(
 			@ApiParam(value = "Codigo de uma categoria", example = "1") @PathVariable Long codigo) {
