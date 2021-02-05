@@ -1,6 +1,5 @@
 package br.com.algamoney.config;
 
-import br.com.algamoney.config.property.AlgamoneyApiProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
